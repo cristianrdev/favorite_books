@@ -1,0 +1,80 @@
+{% include 'dashboard_base.html' %}
+
+{% block content %}
+{% if request.session.id %}
+
+<div class="container m-2 row">
+
+    <div class="row bg-secondary">
+        <h1 class="col-md-9 text-white">Bienvenidos a Libros Favoritos</h1>
+    </div>
+
+    <div class="row bg-secondary text-white">
+
+
+        <p class="col-md-9">Hola {{ user_selected.first_name }} {{ user_selected.last_name }}, tu id de usuario es {{user_selected.id}}</p>
+
+        <a href="/logout" class="col-md-3 link-light">Cerrar Sesión</a>
+
+
+    </div>
+
+    <div class="row bg-light p-1">
+        <p class="col">Mi email es : {{ user_selected.email }}</p>
+        <p class="col">Mi fecha de nacimiento es : {{ user_selected.birth_date }} </p>
+    </div>
+
+
+    {% else %}
+    <a href="/">Debe logearse para ingresar</a>
+    {% endif %}
+
+
+    <div class="row bg-primary p-3 d-flex justify-content-center rounded">
+
+
+        <form action='addbook' id='addBook' method='post' class="col-3 bg-light rounded align-self-start">
+            <p class="">Ingresa tu libro favorito</p>
+            {% csrf_token %}
+            <label>Título :</label> {{ BookForm.title }}
+            <label>Descripción :</label> {{ BookForm.description }}
+            <button type='submit' class="btn btn-secondary mt-3 my-3">Ingresar Libro Favorito</button>
+
+        </form>
+
+        <div class="col-1">
+
+        </div>
+
+        <div class="col bg-light rounded">
+            <h3 class=" text-center border-bottom text-secondary">Todos los Libros</h3>
+
+            {% for book in all_books %}
+            <div class="border border-secondary my-3 p-1 rounded">
+                <a href="{{book.id}}">{{book.title}} </a>
+                <p>Descripción : {{book.description}}</p>
+                <p> (Subido por: {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}} , {{book.created_at}} )
+                </p>
+                {% if user_selected in book.users_who_like.all%}
+                <a href="delete_favourite_in_dash/{{book.id}}">Quitar favoritos</a>
+                {% else %}
+                <a href="add_favourite_in_dash/{{book.id}}">Agregar a favoritos</a>
+                {% endif %}
+
+
+
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+
+
+
+    </div>
+
+
+
+</div>
+{% endblock %}
